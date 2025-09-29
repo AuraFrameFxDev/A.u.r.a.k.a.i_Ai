@@ -1,0 +1,110 @@
+plugins {
+    id("com.android.library")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
+}
+
+android {
+    namespace = "dev.aurakai.auraframefx.sandboxui"
+    compileSdk = 36
+    compilesdkpreview = "CANARY"
+
+    defaultConfig {
+        minSdk = 34
+        targetSdk = 36
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+        
+        // Enable vector drawable support
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+    
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+        }
+    }
+    
+    // Java and Kotlin compilation settings
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
+        isCoreLibraryDesugaringEnabled = true
+    }
+    
+    kotlinOptions {
+        jvmTarget = "24"
+        freeCompilerArgs = listOf(
+            "-Xjdk-release=24",
+            "-Xjsr305=strict",
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xcontext-receivers"
+        )
+    }
+    
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+    
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+        animationsDisabled = true
+    }
+}
+
+dependencies {
+    api(project(":core-module"))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose.ui)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.hilt.android); ksp(libs.hilt.compiler)
+    implementation(libs.bundles.coroutines)
+    implementation(libs.timber); implementation(libs.coil.compose)
+    testImplementation(libs.bundles.testing.unit); testImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.android)
+    testImplementation(libs.hilt.android.testing); kspTest(libs.hilt.compiler)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.hilt.android.testing); kspAndroidTest(libs.hilt.compiler)
+    implementation(libs.kotlin.stdlib.jdk8)
+}
+
+tasks.register("sandboxStatus") {
+    group = "aegenesis"
+    doLast { println("\uD83D\uDCE6 SANDBOX UI - Ready (Java 24)") }
+}
+Processing module: sandbox-ui

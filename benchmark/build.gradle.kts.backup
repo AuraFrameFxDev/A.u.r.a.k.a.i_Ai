@@ -1,0 +1,181 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    id("kotlin-parcelize")
+}
+
+android {
+    namespace = "dev.aurakai.auraframefx.benchmark"
+android {
+    namespace = "dev.aurakai.auraframefx.benchmark"
+    compileSdk = 35
+
+    defaultConfig {
+        minSdk = 33
+        targetSdk = 35
+        testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR,LOW_BATTERY,DEBUGGABLE"
+        testInstrumentationRunnerArguments["android.experimental.self-instrumenting"] = "true"
+        
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+    
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "benchmark-rules.pro"
+            )
+        }
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+        }
+        create("benchmark") {
+            enableUnitTestCoverage = true
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "benchmark-rules.pro"
+            )
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
+        isCoreLibraryDesugaringEnabled = true
+    }
+    
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(24))
+        }
+    }
+    
+    kotlinOptions {
+        jvmTarget = "24"
+        freeCompilerArgs = listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-Xcontext-receivers"
+        )
+    }
+    
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+    
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+        animationsDisabled = true
+    }
+    buildToolsVersion = "36.0.0"
+    ndkVersion = "28.2.13676358"
+}
+
+dependencies {
+    // Project Modules
+    implementation(project(":core-module"))
+    implementation(project(":datavein-oracle-native"))
+    implementation(project(":secure-comm"))
+    implementation(project(":oracle-drive-integration"))
+    
+    // Core AndroidX Libraries
+    implementation(libs.bundles.androidx)
+    implementation(libs.bundles.lifecycle)
+    
+    // Compose UI
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose.ui)
+    debugImplementation(libs.bundles.compose.debug)
+    
+    // Dependency Injection
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
+    
+    // Coroutines & Serialization
+    implementation(libs.bundles.coroutines)
+    
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    
+    // Benchmark
+    implementation(libs.benchmark.junit4)
+    
+    // Utilities
+    implementation(libs.bundles.utilities)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    
+    // Image Loading
+    implementation(libs.coil.compose)
+    
+    // Material Design
+    implementation(libs.material)
+    
+    // Testing
+    testImplementation(libs.bundles.testing)
+    testImplementation(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    
+    // Android Testing
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    
+    testLogging {
+        events("passed", "skipped", "failed")
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+tasks.register("benchmarkModuleStatus") {
+    group = "regeneration"
+    description = "Check Benchmark Module status"
+    doLast {
+        println("📊 BENCHMARK MODULE - Genesis Protocol Status: ACTIVE")
+        println("   ├── Namespace: ${android.namespace}")
+        println("   ├── Java Version: 24")
+        println("   ├── Min SDK: ${android.defaultConfig.minSdk}")
+        println("   ├── Target SDK: ${android.defaultConfig.targetSdk}")
+        println("   └── Features: Performance Benchmarking")
+    }
+}Processing module: benchmark

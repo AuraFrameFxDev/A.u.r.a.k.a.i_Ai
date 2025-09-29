@@ -1,0 +1,32 @@
+openapi: 3.1.0
+info:
+  title: AeGenesis API (Stub Redirect)
+  version: 1.0.0
+  description: |
+    This is a stub placeholder. The authoritative unified spec is now ASSEMBLED from fragments.
+
+    Source of truth:
+      - Fragments: app/api/_fragments/*.yml (paths + core-schemas.yml)
+      - Assembly Task: ./gradlew openApiAssembleUnified
+      - Generated Output: build/openapi/unified-aegenesis-api.generated.yml
+
+    Rationale:
+      Fragment model reduces drift, centralizes shared schemas, and enables CI gating (openApiEnforce).
+
+    Do NOT add new endpoints here. Instead:
+      1. Create/edit a fragment in app/api/_fragments (or extend existing domain file).
+      2. Run: ./gradlew openApiAssembleUnified
+      3. Commit fragment + (optionally) generated spec artifact if distribution requires.
+
+    For validation & enforcement:
+      - ./gradlew openApiAudit
+      - ./gradlew openApiFragmentHealth
+      - ./gradlew openApiEnforce (runs in CI via check dependency)
+
+  x-stub: true
+  x-source-of-truth: fragments
+  x-generated-task: openApiAssembleUnified
+servers:
+  - url: https://api.aurafx.com/v1
+paths: { }
+components: { }

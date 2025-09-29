@@ -1,0 +1,156 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    id("kotlin-parcelize")
+}
+
+android {
+    namespace = "dev.aurakai.auraframefx.list"
+    compileSdk = 35
+    
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 35
+        
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+        
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+    
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
+    }
+    
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(23))
+        }
+    }
+    
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-Xcontext-receivers"
+        )
+    }
+    
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+    
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+        animationsDisabled = true
+    }
+}
+
+dependencies {
+    // Project Modules
+    implementation(project(":core-module"))
+    implementation(project(":feature-module"))
+    
+    // Core AndroidX Libraries
+    implementation(libs.bundles.androidx)
+    implementation(libs.bundles.lifecycle)
+    
+    // Compose UI
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose.ui)
+    debugImplementation(libs.bundles.compose.debug)
+    
+    // Dependency Injection
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
+    
+    // Coroutines & Serialization
+    implementation(libs.bundles.coroutines)
+    
+    // Utilities
+    implementation(libs.bundles.utilities)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    
+    // Image Loading
+    implementation(libs.coil.compose)
+    
+    // Material Design
+    implementation(libs.material)
+    
+    // Testing
+    testImplementation(libs.bundles.testing)
+    testImplementation(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    
+    // Android Testing
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    
+    testLogging {
+        events("passed", "skipped", "failed")
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+tasks.register("listModuleStatus") {
+    group = "regeneration"
+    description = "Check List Module status"
+    doLast {
+        println("📝 LIST MODULE - Genesis Protocol Status: ACTIVE")
+        println("   ├── Namespace: ${android.namespace}")
+        println("   ├── Java Version: 24")
+        println("   ├── Min SDK: ${android.defaultConfig.minSdk}")
+        println("   ├── Target SDK: ${android.defaultConfig.targetSdk}")
+        println("   └── Features: List Components & UI")
+    }
+}Processing module: list

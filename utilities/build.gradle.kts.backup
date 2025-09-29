@@ -1,0 +1,131 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    id("kotlin-parcelize")
+}
+
+android {
+    namespace = "dev.aurakai.auraframefx.utils"
+    compileSdk = 35
+    
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 35
+        
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+    
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
+        isCoreLibraryDesugaringEnabled = true
+    }
+    
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(24))
+        }
+    }
+    
+    kotlinOptions {
+        jvmTarget = "24"
+        freeCompilerArgs = listOf(
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xcontext-receivers"
+        )
+    }
+    
+    buildFeatures {
+        buildConfig = true
+    }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+    
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
+}
+
+dependencies {
+    // Project Modules
+    implementation(project(":core-module"))
+    
+    // Core AndroidX Libraries
+    implementation(libs.bundles.androidx)
+    implementation(libs.bundles.lifecycle)
+    
+    // Dependency Injection
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
+    
+    // Coroutines & Serialization
+    implementation(libs.bundles.coroutines)
+    
+    // Utilities (this is the utilities module, so it provides these)
+    implementation(libs.bundles.utilities)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    
+    // Material Design
+    implementation(libs.material)
+    
+    // Testing
+    testImplementation(libs.bundles.testing)
+    testImplementation(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    
+    // Android Testing
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    
+    testLogging {
+        events("passed", "skipped", "failed")
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+tasks.register("utilitiesModuleStatus") {
+    group = "regeneration"
+    description = "Check Utilities Module status"
+    doLast {
+        println("🔧 UTILITIES MODULE - Genesis Protocol Status: ACTIVE")
+        println("   ├── Namespace: ${android.namespace}")
+        println("   ├── Java Version: 24")
+        println("   ├── Min SDK: ${android.defaultConfig.minSdk}")
+        println("   ├── Target SDK: ${android.defaultConfig.targetSdk}")
+        println("   └── Features: Common Utilities & Helper Functions")
+    }
+}Processing module: utilities

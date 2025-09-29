@@ -1,0 +1,93 @@
+// ==== GENESIS PROTOCOL - COLORBLENDR MODULE ====
+// Color utility and theming module
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
+
+}
+
+android {
+    namespace = "dev.aurakai.auraframefx.colorblendr"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 33
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // For test builds
+    testOptions {
+        targetSdk = 36
+    }
+
+    // For linting
+    lint {
+        targetSdk = 36
+    }
+
+    buildFeatures {
+        buildConfig = true
+        // compose = true  // Removed as per user's request to handle compose separately
+    }
+
+    // Compose options
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
+        isCoreLibraryDesugaringEnabled = true
+    }
+    
+    kotlinOptions {
+        jvmTarget = "24"
+        freeCompilerArgs = listOf(
+            "-Xjdk-release=24",
+            "-Xjsr305=strict",
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+}
+
+dependencies {
+    // Core
+    implementation(project(":core-module"))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose.ui)
+    debugImplementation(libs.bundles.compose.debug)
+
+    // Lifecycle
+    implementation(libs.bundles.lifecycle)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // Utilities
+    implementation(libs.timber)
+
+    // Testing
+    implementation(libs.kotlin.stdlib.jdk8)
+}
+
+tasks.register("colorblendrStatus") {
+    group = "aegenesis"
+    doLast { println("\uD83D\uDCE6 COLORBLENDR MODULE - Ready (Java 24)") }
+}
+Processing module: colorblendr

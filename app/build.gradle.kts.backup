@@ -1,0 +1,198 @@
+// ==== GENESIS PROTOCOL - APP MODULE ====
+// Main application module for AuraKai Framework
+
+// Import version catalog for easy access
+val libs = rootProject.libs
+
+// All plugins in one block with proper application
+plugins {
+    // Core plugins (applied immediately)
+    id("com.android.application")
+    kotlin("android") version "2.2.20"
+    
+    // Version catalog plugins
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.services)
+}
+
+// Dependencies block
+dependencies {
+    // Core KTX
+    implementation(libs.core.ktx)
+    
+    // Compose
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+}
+// Configure Android settings
+@Suppress("UnstableApiUsage")
+android {
+    namespace = "dev.aurakai.auraframefx"
+    compileSdk = 36
+    compileSdkPreview = "CANARY"
+
+    defaultConfig {
+        applicationId = "dev.aurakai.auraframefx"
+        minSdk = 33
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+
+    buildTypes {
+        debug {
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-DEBUG"
+        }
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+
+    // Kotlin compiler options
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
+    }
+
+    // Java toolchain configuration with fallback to 24 if 25 is not available
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+            // Fallback to 24 if 25 is not available
+            languageVersion.convention(JavaLanguageVersion.of(24))
+        }
+    }
+
+
+    dependencies {
+        // ===== Module Dependencies =====
+        implementation(project(":core-module"))
+        implementation(project(":collab-canvas"))  // For WebSocket support
+
+        // Web browsing capabilities
+        implementation("org.jsoup:jsoup:1.16.2")  // For HTML parsing
+        implementation("com.squareup.okhttp3:okhttp:4.12.0")  // For network requests
+        implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")  // For OkHttp logging
+
+        // WebSocket support
+        implementation("org.java-websocket:Java-WebSocket:1.5.4")
+
+        // Coroutines for async operations
+        implementation(libs.bundles.coroutines)
+        implementation(project(":feature-module"))
+        implementation(project(":oracle-drive-integration"))
+        implementation(project(":romtools"))
+        implementation(project(":secure-comm"))
+        implementation(project(":collab-canvas"))
+        implementation(project(":colorblendr"))
+        implementation(project(":sandbox-ui"))
+        implementation(project(":datavein-oracle-native"))
+
+        // ===== BOMS =====
+        implementation(platform(libs.androidx.compose.bom))
+        implementation(platform(libs.firebase.bom))
+
+        // ===== Core & UI =====
+        implementation(libs.bundles.androidx.core)
+        implementation(libs.bundles.compose.complete)
+        implementation(libs.androidx.navigation.compose)
+        implementation(libs.androidx.datastore.preferences)
+        implementation(libs.androidx.security.crypto)
+
+
+        // ===== DI =====
+        // Hilt BOM (Bill of Materials)
+        implementation(platform(libs.hilt.bom))
+        implementation(libs.hilt.android)
+        ksp(libs.hilt.android.compiler)
+        
+        // For instrumentation tests
+        androidTestImplementation(libs.hilt.android.testing)
+        kspAndroidTest(libs.hilt.compiler)
+        
+        // For local unit tests
+        testImplementation(libs.hilt.android.testing)
+        kspTest(libs.hilt.compiler)
+
+        // ===== Async & Networking =====
+        implementation(libs.bundles.coroutines)
+        implementation(libs.bundles.network)
+        implementation(libs.kotlinx.serialization.json)
+        implementation(libs.kotlinx.datetime)
+
+        // ===== Data =====
+        implementation(libs.bundles.room.runtime)
+        ksp(libs.bundles.room.compiler)
+
+        // ===== Firebase =====
+        implementation(libs.bundles.firebase.core)
+
+        // ===== Utilities =====
+        implementation(libs.bundles.utilities.android)
+
+        // ===== Hooking =====
+        implementation(libs.bundles.hooking.modern)
+        ksp(libs.bundles.hooking.modern.ksp)
+        compileOnly(files(rootProject.file("Libs/api-82.jar")))
+        compileOnly(files(rootProject.file("Libs/api-82-sources.jar")))
+
+        // YukiHook API for system modifications
+        implementation("com.highcapable.yukihookapi:api:${libs.versions.yukiHook.get()}")
+        ksp("com.highcapable.yukihookapi:ksp-xposed:${libs.versions.yukiHook.get()}")
+
+        // For keyboard modification features
+        implementation("androidx.core:core-ktx:${libs.versions.coreKtx.get()}")
+        implementation("androidx.lifecycle:lifecycle-runtime-ktx:${libs.versions.lifecycle.get()}")
+
+
+        // ===== Desugaring =====
+        coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+        // ===== Testing =====
+        testImplementation(libs.bundles.testing.unit.jvm)
+        testRuntimeOnly(libs.junit.jupiter.engine)
+        testRuntimeOnly(libs.junit.platform.launcher)
+        androidTestImplementation(libs.bundles.androidx.testing.android)
+        androidTestImplementation(libs.hilt.android.testing)
+
+        // ===== Debugging =====
+        debugImplementation(libs.leakcanary.android)
+        debugImplementation(libs.bundles.compose.debug)
+    }
+}

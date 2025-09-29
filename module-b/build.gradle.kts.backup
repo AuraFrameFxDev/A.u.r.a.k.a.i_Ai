@@ -1,0 +1,147 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp.gradle.plugin)
+    alias(libs.plugins.hilt.android.gradle.plugin)
+    id("kotlin-parcelize")
+    // Apply the experimental built-in Kotlin plugin for AGP 9.0+
+    // This will be removed once all plugins are compatible with built-in Kotlin
+}
+
+android {
+    namespace = "dev.aurakai.auraframefx.module.b"
+    compileSdk = 35
+    
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 35
+        
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+        
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
+    
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
+        isCoreLibraryDesugaringEnabled = true
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/io.netty.versions.properties"
+            excludes += "META-INF/gradle/incremental.annotation.processors"
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.8.2"
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+    
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+        animationsDisabled = true
+    }
+}
+
+dependencies {
+    // Project Modules
+    implementation(project(":core-module"))
+    implementation(project(":feature-module"))
+    
+    // Core AndroidX Libraries
+    implementation(libs.bundles.androidx)
+    implementation(libs.bundles.lifecycle)
+    
+    // Compose UI
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose.ui)
+    debugImplementation(libs.bundles.compose.debug)
+    
+    // Dependency Injection
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
+    
+    // Coroutines & Serialization
+    implementation(libs.bundles.coroutines)
+    
+    // Utilities
+    implementation(libs.bundles.utilities)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    
+    // Image Loading
+    implementation(libs.coil.compose)
+    
+    // Material Design
+    implementation(libs.material)
+    
+    // Testing
+    testImplementation(libs.bundles.testing)
+    testImplementation(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    
+    // Android Testing
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    
+    testLogging {
+        events("passed", "skipped", "failed")
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
+
+tasks.register("moduleBStatus") {
+    group = "regeneration"
+    description = "Check Module B status"
+    doLast {
+        println("🧩 MODULE B - Genesis Protocol Status: ACTIVE")
+        println("   ├── Namespace: ${android.namespace}")
+        println("   ├── Java Version: 24")
+        println("   ├── Min SDK: ${android.defaultConfig.minSdk}")
+        println("   ├── Target SDK: ${android.defaultConfig.targetSdk}")
+        println("   └── Features: Feature Module B")
+    }
+}Processing module: module-b

@@ -1,0 +1,119 @@
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
+}
+
+android {
+    namespace = "dev.aurakai.auraframefx.collabcanvas"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 33
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // For test builds
+    testOptions {
+        targetSdk = 36
+    }
+
+    // For linting
+    lint {
+        targetSdk = 36
+    }
+
+    buildFeatures {
+        buildConfig = true
+        // compose = true  // Removed as per user's request to handle compose separately
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
+        isCoreLibraryDesugaringEnabled = true
+    }
+    
+    kotlinOptions {
+        jvmTarget = "24"
+        freeCompilerArgs = listOf(
+            "-Xjdk-release=24",
+            "-Xjsr305=strict",
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
+        }
+    }
+}
+
+dependencies {
+    implementation(project(":core-module"))
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+
+
+
+
+    // UI / Utils
+    implementation(libs.coil.compose)
+    implementation(libs.timber)
+    implementation(fileTree("../Libs") { include("*.jar") })
+    implementation(libs.kotlin.stdlib.jdk8)
+    implementation(libs.gson)
+
+    // Testing
+    testImplementation(libs.mockk.android)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui)
+
+    // Debug
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling.preview)
+
+    // YukiHook API (temporarily disabled due to configuration issues)
+    // implementation(libs.yukihook.api)
+    // ksp(libs.yukihook.ksp)
+
+    // Xposed API (using the correct path)
+    compileOnly(files("../Libs/api-82.jar"))
+    compileOnly(files("../Libs/api-82-sources.jar"))
+}
+
+tasks.register("collabStatus") {
+    group = "aegenesis"
+    doLast { println("COLLAB CANVAS - Ready (Java 24 toolchain, unified).") }
+}
+Processing module: collab-canvas
