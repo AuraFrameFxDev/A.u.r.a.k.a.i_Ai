@@ -43,6 +43,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme // Added import
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -55,7 +56,7 @@ class MainActivity : ComponentActivity() {
             Timber.d("🧠 Genesis MainActivity launching...")
 
             setContent {
-                MaterialTheme {
+                AuraFrameFXTheme { // Changed from MaterialTheme
                     AuraOSApp()
                 }
             }

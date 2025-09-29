@@ -1,5 +1,7 @@
 package dev.aurakai.auraframefx.ui.theme
 
+import androidx.compose.ui.graphics.Color
+
 // Primary Colors - Enhanced Neon Palette
 val NeonTeal = Color(0xFF00FFCC) // Brighter teal for accents
 val NeonPurple = Color(0xFFE000FF) // Slightly softer purple for readability
@@ -35,8 +37,8 @@ val LightSurface = Color(0xFF2D2D2D) // Surface color
 val LightOnSurface = Color(0xFF00FFCC) // Text on surface
 val LightSurfaceVariant = Color(0xFF3D3D3D) // Surface variant
 val LightOnSurfaceVariant = Color(0xFF00FFFF) // Text on surface variant
-val LightOnError = Color(0xFF000000) // Black for error text
 val LightError = Color(0xFFFF0000) // Red for errors
+// val LightOnError = Color(0xFF000000) // Black for error text - Duplicate Removed
 
 // Common Colors
 val CardBackground = Color(0xFF333333) // Card background color

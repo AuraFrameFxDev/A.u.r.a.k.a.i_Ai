@@ -12,6 +12,7 @@ android {
     namespace = "dev.aurakai.auraframefx"
     compileSdk = 36
     defaultConfig {
+        applicationId = "dev.aurakai.auraframefx" // Added applicationId
         minSdk = 33
         multiDexEnabled = true
     }
@@ -49,7 +50,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
     implementation(libs.androidx.core.ktx)
-    implementation("com.google.firebase:firebase-analytics:23.0.0")
+    implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics) // Added Crashlytics dependency
 
     // Kotlin Core
@@ -60,14 +61,20 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.work)
     ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose) // Added M3 related dependency
 
     // Compose (using the BOM and bundle)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.bundles.compose.ui)
-    debugImplementation(libs.bundles.compose.debug)
+    implementation(libs.bundles.compose.ui) // contains compose.ui, compose.ui.graphics, compose.ui.tooling.preview
+    implementation(libs.androidx.material3)
+    implementation("androidx.compose.material3:material3-window-size-class")
+    implementation(libs.androidx.activity.compose)
+    implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.test.ext.junit)
-    implementation(libs.androidx.test.espresso.core)
+    implementation(libs.androidx.lifecycle.viewmodel.compose) // Added M3 related dependency
+    debugImplementation(libs.bundles.compose.debug) // contains compose.ui.tooling, compose.ui.test.manifest
+    
+    // Old Material Components - REMOVED: implementation("com.google.android.material:material:1.12.0")
 
     // Utilities & Networking
     implementation(libs.timber)
@@ -79,6 +86,7 @@ dependencies {
     androidTestImplementation(libs.bundles.testing.android)
     androidTestImplementation(libs.hilt.android.testing)
     debugImplementation(libs.leakcanary.android)
+    // Espresso and JUnit already present via bundles or direct dependencies above
 
     // Multidex
     implementation("androidx.multidex:multidex:2.0.1")

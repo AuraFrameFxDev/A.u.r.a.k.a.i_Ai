@@ -17,6 +17,7 @@ package dev.aurakai.auraframefx.ui.theme
 // For now, we will use the default Material 3 typography.
 // Customizations from typography.xml (like specific text colors) will be
 // handled by how Text Composables use the ColorScheme.
+import androidx.compose.material3.Typography // Added import
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
